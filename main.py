@@ -4,6 +4,7 @@ from cvzone.ClassificationModule import Classifier
 import numpy as np
 import math
 import time
+from Text2Speech import speak
 
 
 cap = cv2.VideoCapture(0)
@@ -14,7 +15,10 @@ imgSize = 300
 counter = 0
 folder = "Data/T"
 
-labels = ["A", "B", "T"]
+labels = ["Alif", "Ba", "Ta"]
+arabicLater = ["أ", "ب", "ت"]
+
+currentPredicatedLaterIndex = 0
 
 while True:
     success, img = cap.read()
@@ -42,7 +46,8 @@ while True:
                 wGap = math.ceil((imgSize-wCal) / 2)
                 imgWhite[:, wGap: wCal+wGap] = imgResize
                 prediction, index = classifier.getPrediction(imgWhite, draw=False)
-                print(prediction, index)
+
+                currentPredicatedLaterIndex = index
 
                 cv2.rectangle(imgOutput, (x - offset, y - offset - 50),
                               (x - offset + 90, y - offset - 50 + 50), (255, 0, 255), cv2.FILLED)
@@ -66,3 +71,7 @@ while True:
 
     cv2.imshow("Image",imgOutput)
     key = cv2.waitKey(1)
+
+# Read current predicated later on press R rom keyboard
+    if key == ord("r"):
+        speak(arabicLater[currentPredicatedLaterIndex])

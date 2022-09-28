@@ -29,5 +29,4 @@ def read():
         os.system("mpg321 beep.mp3")
         read()
 
-read()
 
