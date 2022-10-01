@@ -6,7 +6,6 @@ import math
 import time
 from Text2Speech import speak
 
-
 cap = cv2.VideoCapture(0)
 detector = HandDetector(maxHands=1)
 classifier = Classifier("Model/keras_model.h5", "Model/labels.txt")
@@ -15,7 +14,9 @@ imgSize = 300
 counter = 0
 folder = "Data/T"
 
-labels = ["Alif", "Ba", "Ta"]
+labels = ["Alif", "Baa", "Taa", "Thaa", "Jim", "Ha", "Kha", "Dal", "Dhal", "Ra", "Zay", "Sin", "Shin", "Sad", "Dad",
+          "Tta", "Dhaa", "Ayn", "Ghaa", "Faa", "Kaa", "Kaf", "Laa", "Mim", "Noun", "Haa", "Waaw", "Yaa"]
+
 arabicLater = ["أ", "ب", "ت"]
 
 currentPredicatedLaterIndex = 0
@@ -34,17 +35,15 @@ while True:
             imgWhite = np.ones((imgSize, imgSize, 3), np.uint8) * 255
             imgCrop = img[y - offset: y + h + offset, x - offset: x + w + offset]
 
+            aspectRatio = h / w
 
-
-            aspectRatio = h/w
-
-            if aspectRatio > 1 :
+            if aspectRatio > 1:
                 k = imgSize / h
-                wCal = math.ceil(k*w)
-                imgResize = cv2.resize(imgCrop, (wCal,imgSize) )
+                wCal = math.ceil(k * w)
+                imgResize = cv2.resize(imgCrop, (wCal, imgSize))
                 imgResizeShape = imgResize.shape
-                wGap = math.ceil((imgSize-wCal) / 2)
-                imgWhite[:, wGap: wCal+wGap] = imgResize
+                wGap = math.ceil((imgSize - wCal) / 2)
+                imgWhite[:, wGap: wCal + wGap] = imgResize
                 prediction, index = classifier.getPrediction(imgWhite, draw=False)
 
                 currentPredicatedLaterIndex = index
@@ -56,12 +55,11 @@ while True:
                               (x + w + offset, y + h + offset), (255, 0, 255), 4)
             else:
                 k = imgSize / w
-                hCal = math.ceil(k*h)
-                imgResize = cv2.resize(imgCrop, (imgSize,hCal) )
+                hCal = math.ceil(k * h)
+                imgResize = cv2.resize(imgCrop, (imgSize, hCal))
                 imgResizeShape = imgResize.shape
-                hGap = math.ceil((imgSize-hCal) / 2)
-                imgWhite[hGap:hCal + hGap,:] = imgResize
-
+                hGap = math.ceil((imgSize - hCal) / 2)
+                imgWhite[hGap:hCal + hGap, :] = imgResize
 
             cv2.imshow("ImageCroped", imgCrop)
             cv2.imshow("ImageWhite", imgWhite)
@@ -69,9 +67,9 @@ while True:
         except:
             print("Error")
 
-    cv2.imshow("Image",imgOutput)
+    cv2.imshow("Image", imgOutput)
     key = cv2.waitKey(1)
 
-# Read current predicated later on press R rom keyboard
+    # Read current predicated later on press R rom keyboard
     if key == ord("r"):
         speak(arabicLater[currentPredicatedLaterIndex])
