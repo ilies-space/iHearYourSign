@@ -1,9 +1,9 @@
 import cv2
-from cvzone.HandTrackingModule import HandDetector
-from cvzone.ClassificationModule import Classifier
+from Modules.HandTrackingModule import HandDetector
+from Modules.ClassificationModule import Classifier
 import numpy as np
 import math
-import time
+
 from Text2Speech import speak
 
 cap = cv2.VideoCapture(0)
@@ -17,7 +17,10 @@ folder = "Data/T"
 labels = ["Alif", "Baa", "Taa", "Thaa", "Jim", "Ha", "Kha", "Dal", "Dhal", "Ra", "Zay", "Sin", "Shin", "Sad", "Dad",
           "Tta", "Dhaa", "Ayn", "Ghaa", "Faa", "Kaa", "Kaf", "Laa", "Mim", "Noun", "Haa", "Waaw", "Yaa"]
 
-arabicLater = ["أ", "ب", "ت"]
+arabicLater = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك"
+               , "ل", "م", "ن", "ه", "و", "ي"]
+
+
 
 currentPredicatedLaterIndex = 0
 
@@ -60,9 +63,6 @@ while True:
                 imgResizeShape = imgResize.shape
                 hGap = math.ceil((imgSize - hCal) / 2)
                 imgWhite[hGap:hCal + hGap, :] = imgResize
-
-            cv2.imshow("ImageCroped", imgCrop)
-            cv2.imshow("ImageWhite", imgWhite)
 
         except:
             print("Error")
