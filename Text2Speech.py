@@ -7,7 +7,6 @@ import os
 mytext = 'مرحبا'
 
 textCharachter = []
-os.system("mpg321 beep.mp3")
 
 
 def speak(text):

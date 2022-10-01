@@ -54,8 +54,6 @@ class Classifier:
 
         return list(prediction[0]), indexVal
 
-
-
 def main():
     cap = cv2.VideoCapture(0)
     maskClassifier = Classifier('Model/keras_model.h5', 'Model/labels.txt')
@@ -65,7 +63,6 @@ def main():
         print(predection)
         cv2.imshow("Image", img)
         cv2.waitKey(1)
-
 
 if __name__ == "__main__":
     main()

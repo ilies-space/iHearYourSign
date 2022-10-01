@@ -3,6 +3,7 @@ from Modules.HandTrackingModule import HandDetector
 from Modules.ClassificationModule import Classifier
 import numpy as np
 import math
+import os
 
 from Text2Speech import speak
 
@@ -20,9 +21,34 @@ labels = ["Alif", "Baa", "Taa", "Thaa", "Jim", "Ha", "Kha", "Dal", "Dhal", "Ra",
 arabicLater = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك"
                , "ل", "م", "ن", "ه", "و", "ي"]
 
+predictedCharactersCollector = []
 
+predictionHolder = []
 
 currentPredicatedLaterIndex = 0
+
+def handle_prediction_result():
+    global predictedCharactersCollector, predictionHolder, currentPredicatedLaterIndex
+    # if the predication is the same 8 time arrow than save it otherwise restart
+    predicted_character = arabicLater[currentPredicatedLaterIndex]
+    time_of_recheck = 8
+    print("----> ", predicted_character)
+    if len(predictedCharactersCollector) == 0:
+        predictedCharactersCollector.append(predicted_character)
+    else:
+        if len(predictedCharactersCollector) < time_of_recheck:
+            if predictedCharactersCollector[-1] == predicted_character:
+                predictedCharactersCollector.append(predicted_character)
+                if len(predictedCharactersCollector) == time_of_recheck/2:
+                    speak(predicted_character)
+            else:
+                predictedCharactersCollector = []
+        else:
+            predictionHolder.append(predicted_character)
+            predictedCharactersCollector = []
+            os.system("mpg321 beep.mp3")
+
+    print("handle_prediction_result: ", prediction)
 
 while True:
     success, img = cap.read()
@@ -50,6 +76,7 @@ while True:
                 prediction, index = classifier.getPrediction(imgWhite, draw=False)
 
                 currentPredicatedLaterIndex = index
+                handle_prediction_result()
 
                 cv2.rectangle(imgOutput, (x - offset, y - offset - 50),
                               (x - offset + 90, y - offset - 50 + 50), (255, 0, 255), cv2.FILLED)
@@ -68,8 +95,12 @@ while True:
             print("Error")
 
     cv2.imshow("Image", imgOutput)
-    key = cv2.waitKey(1)
+    key = cv2.waitKey(50)
 
     # Read current predicated later on press R rom keyboard
     if key == ord("r"):
-        speak(arabicLater[currentPredicatedLaterIndex])
+        singleWord = ''.join(predictionHolder)
+        print("TO SPEAK: -------> ",singleWord)
+        speak(singleWord)
+        if key == ord("c"):
+            predictionHolder = [""]
